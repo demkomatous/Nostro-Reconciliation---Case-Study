@@ -23,7 +23,7 @@ The assignment consists of five parts, each focusing on a specific phase of the 
 
 ## How to start
 
-* Download the prepared SQLite database or generate fresh data running the `Nostro_reconciliation_prepare_data.py`   
+* Download the prepared SQLite database located in `SQLite/Nostro_reconciliation.db` or generate fresh data running the `Nostro_reconciliation_prepare_data.py` and format tables with prepared SQL `SQLite/Format_Apex_International_Bank_statement.sql` and `SQLite/Format_Eurozone_Settlement_Bank_statement.sql`
 * Open the assignment brief located in the `Assignment/` folder  
 * You are all set – happy coding\!
 
