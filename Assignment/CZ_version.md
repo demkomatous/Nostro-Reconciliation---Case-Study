@@ -204,7 +204,7 @@ Pomocí SQL udělejte přípravu dat pro denní přehled vedení banky. Vedení 
 
 Exportujte agregovaná data ze 3\. Části do Excelu a vytvořte funkční, vizuálně atraktivní a profesionálně naformátovaný manažerský přehled.
 
-* Naprogramujte/nahrajte VBA makro, které automaticky aplikuje toto formátování a styl na surová data. Makro nastavte na klávesovou zkratku `CTRL \+ SHIFT \+ R`.  
+* Naprogramujte/nahrajte VBA makro, které automaticky aplikuje toto formátování a styl na surová data. Makro nastavte na klávesovou zkratku `CTRL + SHIFT + R`.  
 * Výsledný soubor .xlsx bude sloužit jako standardizovaná datová příloha odesílaná vedení banky v rámci denního reportingu.
 
 ### 5. Část: Report pro vedení banky ve Wordu
