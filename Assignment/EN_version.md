@@ -39,16 +39,16 @@ As you probably realized in the previous chapter, errors or discrepancies can oc
 
 ### Data Structure – Apex International Bank
 
-Dataset `Apex\_International\_Bank\_transactions.csv` contains outgoing transaction data initiated by clients on Friday, June 12, 2026\.  
+Dataset `Apex_International_Bank_transactions.csv` contains outgoing transaction data initiated by clients on Friday, June 12, 2026\.  
 The file header consists of:
 
-- `tx\_id`: A unique transaction identifier within the Apex International Bank system.  
+- `tx_id`: A unique transaction identifier within the Apex International Bank system.  
 - `date`: The transaction initiation date   
 - `time`: The transaction initiation time  
-- `sender\_acc\_number`: The account number of the Apex International Bank client.  
-- `beneficiary\_iban`: The beneficiary's IBAN (not restricted by region).  
+- `sender_acc_number`: The account number of the Apex International Bank client.  
+- `beneficiary_iban`: The beneficiary's IBAN (not restricted by region).  
 - `amount`: The EUR amount requested for transfer.  
-- `fee\_type`: The fee disposition code, containing one of the following values: `OUR | SHA | BEN`  
+- `fee_type`: The fee disposition code, containing one of the following values: `OUR | SHA | BEN`  
   * `OUR` – Fee is paid by sender; it is settled with AIB off-statement; the beneficiary must receive the full transaction amount  
   * `SHA` – The fee is shared; the sender's fee is settled off-statement, and the beneficiary receives the amount minus any incoming bank fees on their end  
   * `BEN` – The beneficiary pays all fees, which are deducted from the transaction amount en route. The beneficiary receives a reduced net amount, which will also appear on the statement from the correspondent bank  
@@ -56,13 +56,13 @@ The file header consists of:
 
 ### Data Structure – Eurozone Settlement Bank
 
-Dataset `Eurozone\_Settlement\_Bank\_statement.csv` contains transaction data processed by the counterparty, Eurozone Settlement Bank, on Monday, June 15, 2026\.  
+Dataset `Eurozone_Settlement_Bank_statement.csv` contains transaction data processed by the counterparty, Eurozone Settlement Bank, on Monday, June 15, 2026\.  
 The file header consists of:
 
-- `ext\_ref\_id`: A unique transaction identifier within the Eurozone Settlement Bank system  
+- `ext_ref_id`: A unique transaction identifier within the Eurozone Settlement Bank system  
 - `date`: The date of settlement  
-- `remittance\_info`: Settlement details; contains either the unique interbank transaction identifier (UETR) used for matching with AIB, or specific bank code (`CHGS/...`, `INT.CALC/...`, `REV/...`) for transactions initiated directly by the clearing bank  
-- `cleared\_amount`: The EUR amount settled and charged by Eurozone Settlement Bank to Apex International Bank  
+- `remittance_info`: Settlement details; contains either the unique interbank transaction identifier (UETR) used for matching with AIB, or specific bank code (`CHGS/...`, `INT.CALC/...`, `REV/...`) for transactions initiated directly by the clearing bank  
+- `cleared_amount`: The EUR amount settled and charged by Eurozone Settlement Bank to Apex International Bank  
 - `catch`: A flag identifying a "catchy" transaction (one that should be uncovered during the exercise). Consists of `1` (catch) or `0` (normal).
 
 ### Process Errors
@@ -73,7 +73,7 @@ Processing errors are errors which would harm at least one of the parties of con
 
 * **Missing transaction in the Eurozone Settlement Bank statement** – The AIB client is harmed due to the resulting payment delay  
 * **Double processing in the Eurozone Settlement Bank statement** – ESB charges the same transaction twice; harming AIB  
-* **Incorrectly calculated `cleared\_amount`** – ESB errs in fee calculation, charging AIB higher or lower clearing fees than required  
+* **Incorrectly calculated `cleared_amount`** – ESB errs in fee calculation, charging AIB higher or lower clearing fees than required  
 * …
 
 Such processing errors can take many forms. Typically, they belong to one of two groups:
@@ -93,7 +93,7 @@ An example for such processing discrepancy is a situation where a client initiat
 
 ### 1. Double Posting
 
-- **Background:** Technical difficulty on the ESB side results in a single correct client instruction from AIB being cleared more than once. The data are affected as follows: the clearing statement from ESB contains multiple independent rows with unique ext\_ref\_id, but all of them carry the same payment UETR and the same positive amount.
+- **Background:** Technical difficulty on the ESB side results in a single correct client instruction from AIB being cleared more than once. The data are affected as follows: the clearing statement from ESB contains multiple independent rows with unique `ext_ref_id`, but all of them carry the same payment UETR and the same positive amount.
 
 - **Consequence:** If reconciliation software fails to identify this duplicate and approves it, AIB transfers the same funds multiple times, resulting in direct financial loss. Conversely, on the beneficiary's side, unjust enrichment occurs.
 
@@ -106,11 +106,11 @@ An example for such processing discrepancy is a situation where a client initiat
 
 ### 3. Error in Fee Charging
 
--  **Background:** The clearing bank fails to respect the fee disposition instructions (fee\_type). For **OUR**\-type transactions (sender pays) and **SHA**\-type (shared fees), the cleared amount should equal the nominal transaction value. If the ESB incorrectly applies the rules for the **BEN**\-type (fee paid by the beneficiary), it deducts the SEPA fee directly from the amount being transferred.
+-  **Background:** The clearing bank fails to respect the fee disposition instructions (`fee_type`). For **OUR**\-type transactions (sender pays) and **SHA**\-type (shared fees), the cleared amount should equal the nominal transaction value. If the ESB incorrectly applies the rules for the **BEN**\-type (fee paid by the beneficiary), it deducts the SEPA fee directly from the amount being transferred.
 
  
 
-- **Data impact:** Since amounts in statements are always positive, this error appears as lower `cleared\_amount` in the ESB statement than the amount recorded by AIB. The difference matches the bank fee exactly.
+- **Data impact:** Since amounts in statements are always positive, this error appears as lower `cleared_amount` in the ESB statement than the amount recorded by AIB. The difference matches the bank fee exactly.
 
 
 - **Consequence:** The beneficiary receives less money than intended, resulting in a loss for the client, or the loss must be compensated by AIB from its revenues as part of the dispute resolution process.
@@ -119,7 +119,7 @@ An example for such processing discrepancy is a situation where a client initiat
 
 - **Background:** Human error during manual data entry or system glitch (e.g., an incorrect currency conversion) on the ESB side results in a transaction being cleared for a completely incorrect amount – a variance that cannot be explained even by fee differences.
 
-- **Data impact:** Both sides share the same UETR reference, but the amount in AIB’s internal system does not match the `cleared\_amount` in the ESB statement.
+- **Data impact:** Both sides share the same UETR reference, but the amount in AIB’s internal system does not match the `cleared_amount` in the ESB statement.
 
 - **Consequence:** Asymmetric risk. If the clearing bank clears a higher amount, more funds leave AIB’s Nostro account than the client requested (resulting in loss for AIB). Conversely, if ESB clears a lower amount, fewer funds are transferred resulting in leaving the transaction incomplete (resulting in a loss for ESB, which must cover the shortfall from its own resources).
 
@@ -127,7 +127,7 @@ An example for such processing discrepancy is a situation where a client initiat
 
 - **Background:** The clearing bank’s system encounters a transaction-pairing or routing error, resulting in transactions belonging to another bank's Nostro account being mistakenly included in AIB’s clearing statement.
 
-- **Data impact:** The ESB statement contains records that include a client UETR reference within the `remittance\_info` field, but this UETR does not match any transaction recorded in AIB’s internal system.
+- **Data impact:** The ESB statement contains records that include a client UETR reference within the `remittance_info` field, but this UETR does not match any transaction recorded in AIB’s internal system.
 
 - **Consequence**: If AIB approves such a transaction, it would settle a payment that was never initiated by its own client. Because no funds can be debited from an AIB account the bank would have to fund the transfer entirely from its own resources, resulting in a direct financial loss.
 
@@ -146,7 +146,7 @@ An example for such processing discrepancy is a situation where a client initiat
 
 - **Background:** Rows with positive amounts appear in the ESB clearing statement for which no corresponding client instruction (UETR reference) exists within AIB’s systems. In practice, these transactions are initiated by the clearing bank itself. They typically represent regular Nostro account maintenance fees, credited interest, or prior-period reversals.
 
-- **Data impact:** The ESB statement contains records that lack a client reference (UETR) in the `remittance\_info` field, displaying specific bank system codes (e.g., `CHGS/...`, `INT.CALC/...`, `REV/...`). There is no counter-operation within the AIB system.  
+- **Data impact:** The ESB statement contains records that lack a client reference (UETR) in the `remittance_info` field, displaying specific bank system codes (e.g., `CHGS/...`, `INT.CALC/...`, `REV/...`). There is no counter-operation within the AIB system.  
   * **`CHGS/PERIODIC/MAINTENANCE FEE MAY 2026`**: The clearing bank charges a fee for account maintenance in May 2026\.  
   * **`INT.CALC/CREDIT INTEREST BASE VALUE`**: The clearing bank credits interest for maintaining a positive balance on the Nostro account.  
   * **`SEPA SETTLEMENT ADJUSTMENT NOTE`**: Clearing adjustments for minor technical (rounding) or exchange rate differences that occurred during the day  
