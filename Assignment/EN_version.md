@@ -135,7 +135,7 @@ An example for such processing discrepancy is a situation where a client initiat
 
 ### 1. Missing clearing of transaction after 5 PM
 
-- **Background:**Every clearing system operates with a specific cut-off time, which in our scenario is set at 5:00 PM. Although transactions initiated by clients after this threshold are immediately processed internally by AIB, the clearing bank will only include them in the next business day’s statement, in line with standard logic of interbank clearing.
+- **Background:** Every clearing system operates with a specific cut-off time, which in our scenario is set at 5:00 PM. Although transactions initiated by clients after this threshold are immediately processed internally by AIB, the clearing bank will only include them in the next business day’s statement, in line with standard logic of interbank clearing.
 
 
 - **Data impact:** During daily reconciliation, the transaction appears as “missing from the Eurozone Settlement Bank statement” (i.e., it exists in the AIB’s records but is absent from the ESB statement).
