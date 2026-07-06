@@ -23,7 +23,7 @@ The assignment consists of five parts, each focusing on a specific phase of the 
 
 ## How to start
 
-* Download the prepared SQLite database or generate fresh data running the `Nostro\_reconciliation\_prepare\_data.py`   
+* Download the prepared SQLite database or generate fresh data running the `Nostro_reconciliation_prepare_data.py`   
 * Open the assignment brief located in the `Assignment/` folder  
 * You are all set – happy coding\!
 
