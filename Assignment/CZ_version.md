@@ -103,7 +103,7 @@ Příkladem takové procesní nesrovnalosti je situace, kdy klient zadá standar
 
 ### 3. Chybně stržený poplatek
 
-- **Podstata:** Clearingová banka nerespektovala instrukce o poplatcích (`fee_type`). U transakcí typu **OUR** (poplatky hradí plátce) a **SHA** (poplatky jsou rozděleny) má být clearingová částka rovna nominální hodnotě transakce. Pokud ESB nesprávně uplatní pravidla pro typ BEN (poplatek hradí příjemce), odečítá poplatek SEPA přímo z převáděné částky.
+- **Podstata:** Clearingová banka nerespektovala instrukce o poplatcích (`fee_type`). U transakcí typu OUR (poplatky hradí plátce) a SHA (poplatky jsou rozděleny) má být clearingová částka rovna nominální hodnotě transakce. Pokud ESB nesprávně uplatní pravidla pro typ BEN (poplatek hradí příjemce), odečítá poplatek SEPA přímo z převáděné částky.
 
 - **Dopad na data:** Jelikož jsou částky v clearingu vždy kladné, tato chyba se projeví tak, že ve výpisu ESB je uvedena nižší částka, než jakou eviduje AIB v poli `amount`. Rozdíl přesně odpovídá fixnímu bankovnímu poplatku.
 
