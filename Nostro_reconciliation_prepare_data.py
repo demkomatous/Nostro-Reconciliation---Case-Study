@@ -72,7 +72,7 @@ for i in range(generate_rows):
 		cleared_amount -= sepa_fee
 
 	ext_ref_id = f"EXTAIB_{date_db}_{str(i).zfill(zfill_len)}"
-	db_list.append([ext_ref_id, date_db, f"Ref: {uetr_id}", cleared_amount, False])
+	db_list.append([ext_ref_id, date_db, f"{uetr_id}", cleared_amount, False])
 
 # Construct dataframes
 aib_data = pd.DataFrame(
@@ -167,7 +167,7 @@ for idx in sample_idxs:
 	esb_data.loc[next_idx] = [
 		f"EXT_{date_db}_{str(len(esb_data)).zfill(len(str(generate_rows)))}",
 		date_db,
-		f"Ref: {aib_data.loc[idx]['tx_id']}",
+		aib_data.loc[idx]['tx_id'],
 		aib_data.loc[idx]['amount'],
 		False
 	]
@@ -187,7 +187,7 @@ if transactions_count > 0:
 	esb_data.loc[sample_idxs, "cleared_amount"] = random_amounts
 	esb_data.loc[sample_idxs, "catch"] = True
 
-	tx_ids_to_find = esb_data.loc[sample_idxs, "remittance_info"].str.replace("Ref: ", "", regex=False)
+	tx_ids_to_find = esb_data.loc[sample_idxs, "remittance_info"]
 	aib_data.loc[aib_data["tx_id"].isin(tx_ids_to_find), "catch"] = True
 
 # Runtime info
