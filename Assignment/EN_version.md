@@ -209,7 +209,7 @@ Using SQL, prepare the data for the bank management's daily report. Management r
 Export the aggregated data from Part 3 into Excel and build a functional, visually polished, and highly informative management dashboard. 
 
 * Develop/record a VBA macro that automatically applies this corporate formatting and style to the raw data. Assign this macro to the keyboard shortcut   
-  `CTRL \+ SHIFT \+ R`.   
+  `CTRL + SHIFT + R`.   
 * The finalized .xlsx file will serve as the standardized data attachment sent to AIB management alongside the daily report.
 
 ### Part 5: Executive Management Report in Word
