@@ -44,7 +44,7 @@ Hlavička souboru obsahuje následující pole:
 - `date`: Datum zadání transakce klientem  
 - `time`: Čas zadání transakce klientem  
 - `sender_acc_number`: Číslo účtu klienta v Apex International Bank  
-- `beneficiary_iban`: IBAN příjemce bez regionálního omezení  
+- `beneficiary_iban`: IBAN příjemce (první dva znaky představují dvoumístný ISO kód cílové země, např. DE, FR, ES)
 - `amount`: Částka převodu v EUR  
 - `fee_type`: typ poplatku; nabývá jedné ze tří hodnot: `OUR | SHA | BEN` 
   * `OUR` – Poplatek hradí odesílatel; s bankou je vyrovnán dodatečně (tzv. off-statement); příjemci musí dorazit částka v plné výši  
@@ -144,9 +144,9 @@ Příkladem takové procesní nesrovnalosti je situace, kdy klient zadá standar
 - **Podstata:** V clearingovém výpisu od ESB se objeví řádky s kladnou částkou, pro které v systémech AIB neexistuje žádný klientský pokyn (UETR reference). V praxi se jedná o transakce iniciované samotnou clearingovou bankou – nejčastěji jde o pravidelné poplatky za vedení Nostro účtu, připsané kreditní úroky, nebo opravné účtování z minulosti (reversals).
 
 - **Dopad na data:** Ve výpisu ESB existují záznamy, které v `remittance_info` neobsahují klientskou referenci (UETR), ale specifický bankovní kód (např. `CHGS/...`, `INT.CALC/...`, `REV/...`). V systému AIB k těmto operacím neexistuje žádný protějšek.  
-* **`CHGS/PERIODIC/MAINTENANCE FEE MAY 2026`**: Clearingová banka si účtuje poplatek za vedení účtu za měsíc květen  
+* **`CHGS/PERIODIC/MAINTENANCE FEE MAY 2026`**: Clearingová banka si účtuje poplatek za vedení účtu za měsíc květen
 * **`INT.CALC/CREDIT INTEREST BASE VALUE`**: Clearingová banka nám připisuje úrok za držení kladného zůstatku na Nostro účtu  
-* **`SEPA SETTLEMENT ADJUSTMENT NOTE`**: Vyrovnání clearingu o drobné technické (zaokrouhlení) nebo kurzové rozdíly, které vznikly během dne  
+* **`SEPA SETTLEMENT ADJUSTMENT NOTE`**: Vyrovnání clearingu (ve prospěch AIB) o drobné technické (zaokrouhlení) nebo kurzové rozdíly, které vznikly během dne   
 * **`TRF FROM BNP BANK SA / CUSTOMER UNKNOWN`**: Neznámá příchozí platba z jiné banky (BNP Bank); peníze dorazily na Nostro účet, ale zpráva neobsahuje žádný smysluplný identifikátor ani číslo účtu koncového klienta v AIB. Finanční prostředky musí být dohledány a přiřazeny ručně.
 
 
@@ -181,7 +181,7 @@ Pomocí SQL vyčíslete potenciální dopad na bilanci Apex International Bank v
 4) Kolik peněz by zůstalo zmrazených (neodeslaných) v důsledku chybějícího zaúčtování ze strany ESB?  
 5) Jaký je celkový nárůst objemu peněz na tranzitním (přechodném) účtu AIB jako outstanding items (položky na cestě)?  
 6) Jaký objem příchozích peněz se nepodařilo automaticky připsat klientům v důsledku chybějících údajů o příjemci?   
-7) Jaký je celkový absolutní objem transakcí, které byly iniciovány ESB?
+7) Jaký je celkový absolutní objem provozních operací iniciovaných přímo ESB (poplatky, úroky, úpravy settlementu)?
 
 ### 3. Část: Denní přehled
 
@@ -193,7 +193,7 @@ Pomocí SQL udělejte přípravu dat pro denní přehled vedení banky. Vedení 
 4) Ve které denní době byli klienti nejaktivnější při zadávání plateb?  
    * Ráno \[6:00-8:30\]  
    * Dopoledne (8:30-11:30\]  
-   * Poledne \[11:30-13:30\]  
+   * Poledne \(11:30-13:30\]  
    * Odpoledne (13:30-17:00)  
    * Večer \[17:00-20:00\]  
    * V noci  

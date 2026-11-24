@@ -46,7 +46,7 @@ The file header consists of:
 - `date`: The transaction initiation date   
 - `time`: The transaction initiation time  
 - `sender_acc_number`: The account number of the Apex International Bank client.  
-- `beneficiary_iban`: The beneficiary's IBAN (not restricted by region).  
+- `beneficiary_iban`: The beneficiary's IBAN (the first two characters represent the two-letter ISO country code, e.g., DE, FR, ES).  
 - `amount`: The EUR amount requested for transfer.  
 - `fee_type`: The fee disposition code, containing one of the following values: `OUR | SHA | BEN`  
   * `OUR` – Fee is paid by sender; it is settled with AIB off-statement; the beneficiary must receive the full transaction amount  
@@ -67,7 +67,7 @@ The file header consists of:
 
 ### Process Errors
 
-This category encompasses actual system failures or human error on the part of the clearing bank (Eurozone Settlement Bank). These scenarios require manual intervention, the filling of a claim, and, in practice, represent direct financial or reputational risk.
+This category encompasses actual system failures or human error on the part of the clearing bank (Eurozone Settlement Bank). These scenarios require manual intervention, the filing of a claim, and, in practice, represent direct financial or reputational risk.
 
 Processing errors are errors which would harm at least one of the parties of contract relationship: AIB, ESB or client of AIB. Harm example might be for example:
 
@@ -106,7 +106,7 @@ An example for such processing discrepancy is a situation where a client initiat
 
 ### 3. Error in Fee Charging
 
--  **Background:** The clearing bank fails to respect the fee disposition instructions (`fee_type`). For **OUR**\-type transactions (sender pays) and **SHA**\-type (shared fees), the cleared amount should equal the nominal transaction value. If the ESB incorrectly applies the rules for the **BEN**\-type (fee paid by the beneficiary), it deducts the SEPA fee directly from the amount being transferred.
+-  **Background:** The clearing bank fails to respect the fee disposition instructions (`fee_type`). For OUR\-type transactions (sender pays) and SHA\-type (shared fees), the cleared amount should equal the nominal transaction value. If the ESB incorrectly applies the rules for the BEN\-type (fee paid by the beneficiary), it deducts the SEPA fee directly from the amount being transferred.
 
  
 
@@ -149,7 +149,7 @@ An example for such processing discrepancy is a situation where a client initiat
 - **Data impact:** The ESB statement contains records that lack a client reference (UETR) in the `remittance_info` field, displaying specific bank system codes (e.g., `CHGS/...`, `INT.CALC/...`, `REV/...`). There is no counter-operation within the AIB system.  
   * **`CHGS/PERIODIC/MAINTENANCE FEE MAY 2026`**: The clearing bank charges a fee for account maintenance in May 2026\.  
   * **`INT.CALC/CREDIT INTEREST BASE VALUE`**: The clearing bank credits interest for maintaining a positive balance on the Nostro account.  
-  * **`SEPA SETTLEMENT ADJUSTMENT NOTE`**: Clearing adjustments for minor technical (rounding) or exchange rate differences that occurred during the day  
+  * **`SEPA SETTLEMENT ADJUSTMENT NOTE`**: Clearing adjustments (credited in AIB's favor) for minor technical (rounding) or exchange rate differences that occurred during the day  
   * **`TRF FROM BNP BANK SA / CUSTOMER UNKNOWN`**: An unidentified incoming transfer from another institution (BNP Bank). Funds were credited to the Nostro account, but the payment message lacks a valid identifier or target account number for the AIB beneficiary. These funds must be manually investigated and assigned.
 
  
@@ -177,15 +177,15 @@ Using SQL, find all the errors and processing discrepancies detailed above. Add 
 
 ### Part 2: Quantifying the Impact
 
-Using SQL,quantify the potential impact on the balance sheet of Apex International Bank in a scenario where all statement items were blindly approved. Answer the following analytical questions:
+Using SQL, quantify the potential impact on the balance sheet of Apex International Bank in a scenario where all statement items were blindly approved. Answer the following analytical questions:
 
 1) How much money would AIB lose as a direct result of double-posted transactions?  
 2) How much funds would AIB mistakenly spend for transactions that were never initiated by its own clients?  
-3) How much more in incorrect fees would AIB be charged if transactions were approved as received?  
+3) How much in incorrect fee deductions would AIB have to compensate if transactions were approved as received?  
 4) How much money would remain frozen (unsettled) due to the clearing omission on the ESB side?  
 5) What is the total volume increase of funds currently held in AIB’s transit (suspense) account as outstanding items?  
 6) How much money failed to be automatically credited to internal clients due to missing or unknown beneficiary information?  
-7) What is the total absolute volume of transactions initiated by the ESB?
+7) What is the total absolute volume of bank operational transactions initiated directly by the ESB?
 
 ### Part 3: Daily Overview
 
@@ -197,7 +197,7 @@ Using SQL, prepare the data for the bank management's daily report. Management r
 4) In which time window were clients most active when initiating payments?  
    * Morning \[6:00-8:30\]  
    * Mid-morning (8:30-11:30\]  
-   * Noon \[11:30-13:30\]  
+   * Noon \(11:30-13:30\]  
    * Afternoon (13:30-17:00)  
    * Evening \[17:00-20:00\]  
    * Night  
